@@ -1,0 +1,11 @@
+[33mcommit 596c99db2c59635ef5efa8a7f446500a589504f1[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: maulllanamm <maulllanamuhammad@gmail.com>
+Date:   Fri May 9 21:46:08 2025 +0700
+
+    feat : add block, transaction and blockchain model
+
+[33mcommit db51b222ebeeb1543f6c5dd111b1289006ebb096[m
+Author: maulllanamm <maulllanamuhammad@gmail.com>
+Date:   Fri May 9 20:54:04 2025 +0700
+
+    feat : initial setup project
