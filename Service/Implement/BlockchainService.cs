@@ -8,6 +8,7 @@ public class BlockchainService : IBlockchainService
 {
     private readonly List<Block> _chain;
     private readonly IBlockService _blockService;
+    private readonly int difficulty = 5;
 
     public BlockchainService(IBlockService blockService)
     {
@@ -34,6 +35,7 @@ public class BlockchainService : IBlockchainService
             Transactions = newBlock.Transactions
         };
         block.Hash = _blockService.CalculateHash(block);
+        _blockService.MineBlock(difficulty, block);
         _chain.Add(block);
         BlockchainStorage.Save(_chain);
     }

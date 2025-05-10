@@ -60,3 +60,6 @@ backend/storage/framework/cache/repository-cache-keys.json
 
 #local workspaces
 *.code-workspace
+
+#blockchain.json
+blockchain.json
