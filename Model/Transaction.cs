@@ -2,7 +2,7 @@ namespace BlockchainNet.Model;
 
 public class Transaction
 {
-    public string From { get; set; }   
-    public string To { get; set; }   
+    public string Sender { get; set; }   
+    public string Receiver { get; set; }   
     public decimal Amount { get; set; }   
 }

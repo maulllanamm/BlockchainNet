@@ -7,7 +7,6 @@ namespace BlockchainNet.Service.Implement;
 
 public class BlockService : IBlockService
 {
-    
     public Block CreateGenesisBlock()
     {
         var block =  new Block
@@ -23,10 +22,24 @@ public class BlockService : IBlockService
         return block;
     }
     
+    public Block CreateBlock(Block previousBlock, List<Transaction> transactions)
+    {
+        var block =  new Block
+        {
+            Index = previousBlock.Index + 1,
+            Timestamp = DateTime.UtcNow,
+            Transactions = transactions,
+            PreviousHash = previousBlock.Hash,
+            nonce = 0
+        };
+        
+        block.Hash = CalculateHash(block);
+        return block;
+    }
     
     public string CalculateHash(Block block)
     {
-        var transactionDetail = string.Join(',', block.Transactions.Select(t => $"{t.From}-{t.To}-{t.Amount}"));
+        var transactionDetail = string.Join(',', block.Transactions.Select(t => $"{t.Sender}-{t.Receiver}-{t.Amount}"));
         var input = block.Index + block.Timestamp.ToString() + block.PreviousHash + transactionDetail + block.nonce.ToString();
         using var sha256 = SHA256.Create();
         var bytes = Encoding.UTF8.GetBytes(input);
@@ -34,7 +47,7 @@ public class BlockService : IBlockService
         return Convert.ToHexString(hashBytes);
     }
 
-    public bool MineBlock(int difficulty, Block block)
+    public void MineBlock(int difficulty, Block block)
     {
         string target = new string('0', difficulty);
         while (!block.Hash.StartsWith(target))
@@ -42,8 +55,6 @@ public class BlockService : IBlockService
             block.nonce++;
             block.Hash = CalculateHash(block);
         }
-
-        return true;
     }
 
 }

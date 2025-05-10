@@ -27,14 +27,12 @@ public class BlockchainService : IBlockchainService
 
     public void AddBlock(NewBlock newBlock)
     {
-        var block = new Block
+        if (!VerifyChain())
         {
-            Index = newBlock.Index,
-            Timestamp = DateTime.UtcNow,
-            PreviousHash = GetLatestBlock().Hash,
-            Transactions = newBlock.Transactions
-        };
-        block.Hash = _blockService.CalculateHash(block);
+            throw new InvalidOperationException("Blockchain is invalid. Aborting block addition.");
+        }
+        var previousBlock = GetLatestBlock();
+        var block = _blockService.CreateBlock(previousBlock, newBlock.Transactions);
         _blockService.MineBlock(difficulty, block);
         _chain.Add(block);
         BlockchainStorage.Save(_chain);

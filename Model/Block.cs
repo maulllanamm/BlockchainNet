@@ -12,6 +12,5 @@ public class Block
 
 public class NewBlock
 {
-    public int Index { get; set; }
     public List<Transaction> Transactions { get; set; }
 }
