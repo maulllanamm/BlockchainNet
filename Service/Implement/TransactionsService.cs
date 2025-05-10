@@ -4,11 +4,11 @@ using BlockchainNet.Storage;
 
 namespace BlockchainNet.Service.Implement;
 
-public class TransactionService : ITransactionService
+public class TransactionsService : ITransactionsService
 {
     private readonly List<Transaction> _pendingTransactions;
 
-    public TransactionService()
+    public TransactionsService()
     {
         _pendingTransactions = new List<Transaction>();
         _pendingTransactions = TransactionStorage.Load() ?? new List<Transaction>();

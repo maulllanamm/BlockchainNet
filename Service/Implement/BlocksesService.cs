@@ -5,7 +5,7 @@ using BlockchainNet.Service.Interface;
 
 namespace BlockchainNet.Service.Implement;
 
-public class BlockService : IBlockService
+public class BlocksesService : IBlocksService
 {
     public Block CreateGenesisBlock()
     {

@@ -8,7 +8,8 @@ public static class ServiceCollectionExtension
     public static void AddCustomService(this IServiceCollection services)
     {
         services.AddScoped<IBlockchainService, BlockchainService>();
-        services.AddScoped<IBlockService, BlockService>();
-        services.AddScoped<ITransactionService, TransactionService>();
+        services.AddScoped<IBlocksService, BlocksesService>();
+        services.AddScoped<ITransactionsService, TransactionsService>();
+        services.AddScoped<IAccountsService, AccountsService>();
     }
 }

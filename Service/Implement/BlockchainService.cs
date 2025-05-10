@@ -7,19 +7,19 @@ namespace BlockchainNet.Service.Implement;
 public class BlockchainService : IBlockchainService
 {
     private readonly List<Block> _chain;
-    private readonly IBlockService _blockService;
+    private readonly IBlocksService _blocksService;
     private readonly int _difficulty = 2;
     private readonly int _reward = 50;
-    private readonly ITransactionService _transactionService;
+    private readonly ITransactionsService _transactionsService;
 
-    public BlockchainService(IBlockService blockService, ITransactionService transactionService)
+    public BlockchainService(IBlocksService blocksService, ITransactionsService transactionsService)
     {
-        _blockService = blockService;
-        _transactionService = transactionService;
+        _blocksService = blocksService;
+        _transactionsService = transactionsService;
         _chain = BlockchainStorage.Load() ?? new List<Block>();
         if (!_chain.Any())
         {
-            var genesis = _blockService.CreateGenesisBlock();
+            var genesis = _blocksService.CreateGenesisBlock();
             _chain.Add(genesis);
             BlockchainStorage.Save(_chain);    
         }
@@ -42,7 +42,7 @@ public class BlockchainService : IBlockchainService
             var currentBlock = _chain[i];
             var previousBlock = _chain[i - 1];
             
-            if (currentBlock.Hash != _blockService.CalculateHash(currentBlock))
+            if (currentBlock.Hash != _blocksService.CalculateHash(currentBlock))
             {
                 return false;
             }
@@ -61,36 +61,16 @@ public class BlockchainService : IBlockchainService
             return Result<Block>.Fail("Blockchain is invalid. Aborting block addition.", 400);
         }
         
-        var rewardTransaction = _transactionService.CreateRewardTransaction(minerAddress, _reward);
-        _transactionService.AddTransaction(rewardTransaction);
+        var rewardTransaction = _transactionsService.CreateRewardTransaction(minerAddress, _reward);
+        _transactionsService.AddTransaction(rewardTransaction);
         var previousBlock = GetLatestBlock();
-        var pendingTransaction = _transactionService.GetPendingTransactions();
-        var block = _blockService.CreateBlock(previousBlock.Data, pendingTransaction.Data);
-        _blockService.MineBlock(_difficulty, block);
+        var pendingTransaction = _transactionsService.GetPendingTransactions();
+        var block = _blocksService.CreateBlock(previousBlock.Data, pendingTransaction.Data);
+        _blocksService.MineBlock(_difficulty, block);
         _chain.Add(block);
         BlockchainStorage.Save(_chain);
-        _transactionService.ClearPendingTransactions();
+        _transactionsService.ClearPendingTransactions();
         return Result<Block>.Ok(block);
     }
-
-    public Result<decimal> GetBalanceOfAddress(string address)
-    {
-        decimal balance = 0;
-        foreach (var block in _chain)
-        {
-            foreach (var transaction in block.Transactions)
-            {
-                if (transaction.Sender == address)
-                {
-                    balance -= transaction.Amount;
-                }
-
-                if (transaction.Receiver == address)
-                {
-                    balance += transaction.Amount;
-                }
-            }
-        }
-        return Result<decimal>.Ok(balance);
-    }
+  
 }

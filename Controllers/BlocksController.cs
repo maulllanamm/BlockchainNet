@@ -22,14 +22,6 @@ public class BlocksController : ControllerBase
         return Ok(result);
     }    
     
-    [HttpGet]
-    [Route("balance/{address}")]
-    public IActionResult GetBalanceOfAddress(string address)
-    {
-        var result = _blockchainService.GetBalanceOfAddress(address);
-        return Ok(result);
-    }
-    
     [HttpPost]
     [Route("mine")]
     public IActionResult Mine(string minerAddress)

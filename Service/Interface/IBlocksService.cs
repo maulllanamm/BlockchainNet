@@ -2,7 +2,7 @@ using BlockchainNet.Model;
 
 namespace BlockchainNet.Service.Interface;
 
-public interface IBlockService
+public interface IBlocksService
 {
     Block CreateGenesisBlock();
     Block CreateBlock(Block previousBlock, List<Transaction> transactions);

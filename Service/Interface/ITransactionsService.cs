@@ -2,7 +2,7 @@ using BlockchainNet.Model;
 
 namespace BlockchainNet.Service.Interface;
 
-public interface ITransactionService
+public interface ITransactionsService
 {
     Result<Transaction>  AddTransaction(Transaction transaction);
     Result<List<Transaction>> GetPendingTransactions();
