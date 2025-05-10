@@ -9,5 +9,6 @@ public static class ServiceCollectionExtension
     {
         services.AddScoped<IBlockchainService, BlockchainService>();
         services.AddScoped<IBlockService, BlockService>();
+        services.AddScoped<ITransactionService, TransactionService>();
     }
 }

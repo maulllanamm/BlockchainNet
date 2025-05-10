@@ -29,9 +29,10 @@ public class BlockchainController : ControllerBase
     }
     
     [HttpPost]
-    public IActionResult Add(NewBlock newBlock)
+    [Route("mine")]
+    public IActionResult Mine(string minerAddress)
     {
-        _blockchainService.AddBlock(newBlock);
+        _blockchainService.Mine(minerAddress);
         return Ok();
     }
     

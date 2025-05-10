@@ -8,11 +8,14 @@ public class BlockchainService : IBlockchainService
 {
     private readonly List<Block> _chain;
     private readonly IBlockService _blockService;
-    private readonly int difficulty = 5;
+    private readonly int _difficulty = 5;
+    private readonly int _reward = 50;
+    private readonly ITransactionService _transactionService;
 
-    public BlockchainService(IBlockService blockService)
+    public BlockchainService(IBlockService blockService, ITransactionService transactionService)
     {
         _blockService = blockService;
+        _transactionService = transactionService;
         _chain = BlockchainStorage.Load() ?? new List<Block>();
         if (!_chain.Any())
         {
@@ -24,18 +27,21 @@ public class BlockchainService : IBlockchainService
     
     public List<Block> GetChain() => _chain;
     public Block GetLatestBlock() => _chain.Last();
-
-    public void AddBlock(NewBlock newBlock)
+    public void Mine(string minerAddress)
     {
         if (!VerifyChain())
         {
             throw new InvalidOperationException("Blockchain is invalid. Aborting block addition.");
         }
+        
+        var rewardTransaction = _transactionService.CreateRewardTransaction(minerAddress, _reward);
+        _transactionService.AddTransaction(rewardTransaction);
         var previousBlock = GetLatestBlock();
-        var block = _blockService.CreateBlock(previousBlock, newBlock.Transactions);
-        _blockService.MineBlock(difficulty, block);
+        var block = _blockService.CreateBlock(previousBlock, _transactionService.GetPendingTransactions());
+        _blockService.MineBlock(_difficulty, block);
         _chain.Add(block);
         BlockchainStorage.Save(_chain);
+        _transactionService.ClearPendingTransactions();
     }
 
     public bool VerifyChain()

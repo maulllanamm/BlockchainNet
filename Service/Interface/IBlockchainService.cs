@@ -6,6 +6,6 @@ public interface IBlockchainService
 {
     List<Block> GetChain();
     Block GetLatestBlock();
-    void AddBlock(NewBlock newBlock);
+    void Mine(string minerAddress);
     bool VerifyChain();
 }
