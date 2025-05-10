@@ -73,5 +73,24 @@ public class BlockchainService : IBlockchainService
         return Result<Block>.Ok(block);
     }
 
-    
+    public Result<decimal> GetBalanceOfAddress(string address)
+    {
+        decimal balance = 0;
+        foreach (var block in _chain)
+        {
+            foreach (var transaction in block.Transactions)
+            {
+                if (transaction.Sender == address)
+                {
+                    balance -= transaction.Amount;
+                }
+
+                if (transaction.Receiver == address)
+                {
+                    balance += transaction.Amount;
+                }
+            }
+        }
+        return Result<decimal>.Ok(balance);
+    }
 }

@@ -20,6 +20,14 @@ public class BlockchainController : ControllerBase
     {
         var result = _blockchainService.GetChain();
         return Ok(result);
+    }    
+    
+    [HttpGet]
+    [Route("balance/{address}")]
+    public IActionResult GetBalanceOfAddress(string address)
+    {
+        var result = _blockchainService.GetBalanceOfAddress(address);
+        return Ok(result);
     }
     
     [HttpPost]
