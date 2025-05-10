@@ -4,8 +4,7 @@ namespace BlockchainNet.Service.Interface;
 
 public interface IBlockchainService
 {
-    List<Block> GetChain();
-    Block GetLatestBlock();
-    void Mine(string minerAddress);
-    bool VerifyChain();
+    Result<List<Block>> GetChain();
+    Result<Block> GetLatestBlock();
+    Result<Block> Mine(string minerAddress);
 }

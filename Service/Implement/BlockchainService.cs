@@ -8,7 +8,7 @@ public class BlockchainService : IBlockchainService
 {
     private readonly List<Block> _chain;
     private readonly IBlockService _blockService;
-    private readonly int _difficulty = 5;
+    private readonly int _difficulty = 2;
     private readonly int _reward = 50;
     private readonly ITransactionService _transactionService;
 
@@ -25,26 +25,17 @@ public class BlockchainService : IBlockchainService
         }
     }
     
-    public List<Block> GetChain() => _chain;
-    public Block GetLatestBlock() => _chain.Last();
-    public void Mine(string minerAddress)
+    public Result<List<Block>> GetChain()
     {
-        if (!VerifyChain())
-        {
-            throw new InvalidOperationException("Blockchain is invalid. Aborting block addition.");
-        }
-        
-        var rewardTransaction = _transactionService.CreateRewardTransaction(minerAddress, _reward);
-        _transactionService.AddTransaction(rewardTransaction);
-        var previousBlock = GetLatestBlock();
-        var block = _blockService.CreateBlock(previousBlock, _transactionService.GetPendingTransactions());
-        _blockService.MineBlock(_difficulty, block);
-        _chain.Add(block);
-        BlockchainStorage.Save(_chain);
-        _transactionService.ClearPendingTransactions();
+        return Result<List<Block>>.Ok(_chain);
     }
 
-    public bool VerifyChain()
+    public Result<Block> GetLatestBlock()
+    {
+        return Result<Block>.Ok(_chain.Last());
+    }
+
+    private bool VerifyChain()
     {
         for (int i = 1; i < _chain.Count; i++)
         {
@@ -63,4 +54,24 @@ public class BlockchainService : IBlockchainService
         }
         return true;
     }
+    public Result<Block> Mine(string minerAddress)
+    {
+        if (!VerifyChain())
+        {
+            return Result<Block>.Fail("Blockchain is invalid. Aborting block addition.", 400);
+        }
+        
+        var rewardTransaction = _transactionService.CreateRewardTransaction(minerAddress, _reward);
+        _transactionService.AddTransaction(rewardTransaction);
+        var previousBlock = GetLatestBlock();
+        var pendingTransaction = _transactionService.GetPendingTransactions();
+        var block = _blockService.CreateBlock(previousBlock.Data, pendingTransaction.Data);
+        _blockService.MineBlock(_difficulty, block);
+        _chain.Add(block);
+        BlockchainStorage.Save(_chain);
+        _transactionService.ClearPendingTransactions();
+        return Result<Block>.Ok(block);
+    }
+
+    
 }

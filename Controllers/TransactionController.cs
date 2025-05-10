@@ -18,7 +18,8 @@ public class TransactionController : ControllerBase
     [HttpGet]
     public IActionResult GetTransactions()
     {
-        return Ok(_transactionService.GetPendingTransactions());
+        var result = _transactionService.GetPendingTransactions();
+        return Ok(result);
     }
     
     [HttpPost]

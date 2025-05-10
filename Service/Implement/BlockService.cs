@@ -28,7 +28,12 @@ public class BlockService : IBlockService
         {
             Index = previousBlock.Index + 1,
             Timestamp = DateTime.UtcNow,
-            Transactions = transactions,
+            Transactions = transactions.Select(t => new Transaction
+            {
+                Receiver = t.Receiver,
+                Sender = t.Sender,
+                Amount = t.Amount,
+            }).ToList(),
             PreviousHash = previousBlock.Hash,
             nonce = 0
         };

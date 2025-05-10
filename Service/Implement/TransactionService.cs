@@ -20,7 +20,10 @@ public class TransactionService : ITransactionService
         TransactionStorage.Save(_pendingTransactions);
     }
 
-    public List<Transaction> GetPendingTransactions() => _pendingTransactions;
+    public Result<List<Transaction>> GetPendingTransactions()
+    {
+        return Result<List<Transaction>>.Ok(_pendingTransactions);
+    }
 
     public void ClearPendingTransactions()
     {

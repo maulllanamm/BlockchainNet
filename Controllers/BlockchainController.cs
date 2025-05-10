@@ -18,22 +18,16 @@ public class BlockchainController : ControllerBase
     [HttpGet]
     public IActionResult GetChain()
     {
-        return Ok(_blockchainService.GetChain());
-    }
-    
-    [HttpGet]
-    [Route("verify")]
-    public IActionResult VerifyChain()
-    {
-        return Ok(_blockchainService.VerifyChain());
+        var result = _blockchainService.GetChain();
+        return Ok(result);
     }
     
     [HttpPost]
     [Route("mine")]
     public IActionResult Mine(string minerAddress)
     {
-        _blockchainService.Mine(minerAddress);
-        return Ok();
+        var result = _blockchainService.Mine(minerAddress);
+        return Ok(result);
     }
     
 }
