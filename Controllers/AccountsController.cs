@@ -8,17 +8,17 @@ namespace BlockchainNet.Controllers;
 [Route("api/v1/accounts")]
 public class AccountsController : ControllerBase
 {
-    private readonly IAccountsService _accountsService;
-    public AccountsController(IAccountsService accountsService)
+    private readonly IAccountsPool _accountsPool;
+    public AccountsController(IAccountsPool accountsPool)
     {
-        _accountsService = accountsService;
+        _accountsPool = accountsPool;
     }
 
     [HttpGet]
     [Route("{address}/balance")]
     public IActionResult GetBalance(string address)
     {
-        var result = _accountsService.GetBalance(address);
+        var result = _accountsPool.GetBalance(address);
         return Ok(result);
     }
     
@@ -26,7 +26,7 @@ public class AccountsController : ControllerBase
     [Route("{address}/transactions")]
     public IActionResult GetTransactions(string address)
     {
-        var result = _accountsService.GetTransactions(address);
+        var result = _accountsPool.GetTransactions(address);
         return Ok(result);
     }
     

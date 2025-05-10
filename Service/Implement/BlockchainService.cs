@@ -4,22 +4,32 @@ using BlockchainNet.Storage;
 
 namespace BlockchainNet.Service.Implement;
 
-public class BlockchainService : IBlockchainService
+public class BlockchainService : IBlockchainMiner, IBlockchainReader
 {
     private readonly List<Block> _chain;
-    private readonly IBlocksService _blocksService;
+    private readonly IBlocksHasher _blocksHasher;
+    private readonly IBlocksFactory _blocksFactory;
+    private readonly IBlocksMiner _blocksMiner;
     private readonly int _difficulty = 2;
     private readonly int _reward = 50;
-    private readonly ITransactionsService _transactionsService;
+    private readonly ITransactionFactory _transactionFactory;
+    private readonly ITransactionsPool _transactionsPool;
 
-    public BlockchainService(IBlocksService blocksService, ITransactionsService transactionsService)
+    public BlockchainService(IBlocksHasher blocksHasher, 
+        IBlocksFactory blocksFactory, 
+        IBlocksMiner blocksMiner, 
+        ITransactionFactory transactionFactory, 
+        ITransactionsPool transactionsPool)
     {
-        _blocksService = blocksService;
-        _transactionsService = transactionsService;
+        _blocksHasher = blocksHasher;
+        _blocksFactory = blocksFactory;
+        _blocksMiner = blocksMiner;
+        _transactionFactory = transactionFactory;
+        _transactionsPool = transactionsPool;
         _chain = BlockchainStorage.Load() ?? new List<Block>();
         if (!_chain.Any())
         {
-            var genesis = _blocksService.CreateGenesisBlock();
+            var genesis = _blocksFactory.CreateGenesisBlock();
             _chain.Add(genesis);
             BlockchainStorage.Save(_chain);    
         }
@@ -42,7 +52,7 @@ public class BlockchainService : IBlockchainService
             var currentBlock = _chain[i];
             var previousBlock = _chain[i - 1];
             
-            if (currentBlock.Hash != _blocksService.CalculateHash(currentBlock))
+            if (currentBlock.Hash != _blocksHasher.CalculateHash(currentBlock))
             {
                 return false;
             }
@@ -61,15 +71,15 @@ public class BlockchainService : IBlockchainService
             return Result<Block>.Fail("Blockchain is invalid. Aborting block addition.", 400);
         }
         
-        var rewardTransaction = _transactionsService.CreateRewardTransaction(minerAddress, _reward);
-        _transactionsService.AddTransaction(rewardTransaction);
+        var rewardTransaction = _transactionFactory.CreateRewardTransaction(minerAddress, _reward);
+        _transactionsPool.AddTransaction(rewardTransaction);
         var previousBlock = GetLatestBlock();
-        var pendingTransaction = _transactionsService.GetPendingTransactions();
-        var block = _blocksService.CreateBlock(previousBlock.Data, pendingTransaction.Data);
-        _blocksService.MineBlock(_difficulty, block);
+        var pendingTransaction = _transactionsPool.GetPendingTransactions();
+        var block = _blocksFactory.CreateBlock(previousBlock.Data, pendingTransaction.Data);
+        _blocksMiner.MineBlock(_difficulty, block);
         _chain.Add(block);
         BlockchainStorage.Save(_chain);
-        _transactionsService.ClearPendingTransactions();
+        _transactionsPool.ClearPendingTransactions();
         return Result<Block>.Ok(block);
     }
   

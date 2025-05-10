@@ -8,32 +8,32 @@ namespace BlockchainNet.Controllers;
 [Route("api/v1/transactions")]
 public class TransactionsController : ControllerBase
 {
-    private readonly ITransactionsService _transactionsService;
+    private readonly ITransactionsPool _transactionsPool;
 
-    public TransactionsController(ITransactionsService transactionsService)
+    public TransactionsController(ITransactionsPool transactionsPool)
     {
-        _transactionsService = transactionsService;
+        _transactionsPool = transactionsPool;
     }
     
     [HttpGet]
     [Route("pending")]
     public IActionResult GetTransactions()
     {
-        var result = _transactionsService.GetPendingTransactions();
+        var result = _transactionsPool.GetPendingTransactions();
         return Ok(result);
     }
     
     [HttpPost]
     public IActionResult AddTransaction(Transaction transaction)
     {
-        var result = _transactionsService.AddTransaction(transaction);
+        var result = _transactionsPool.AddTransaction(transaction);
         return Ok(result);
     }
     
     [HttpDelete]
     public IActionResult DeleteTransaction()
     {
-        var result = _transactionsService.ClearPendingTransactions();
+        var result = _transactionsPool.ClearPendingTransactions();
         return Ok(result);
     }
     

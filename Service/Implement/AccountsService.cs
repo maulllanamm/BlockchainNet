@@ -3,19 +3,20 @@ using BlockchainNet.Service.Interface;
 
 namespace BlockchainNet.Service.Implement;
 
-public class AccountsService : IAccountsService
+public class AccountsService : IAccountsPool
 {
-    private readonly IBlockchainService _blockchainService;
+    private readonly IBlockchainReader _blockchainReader;
 
-    public AccountsService(IBlockchainService blockchainService)
+    public AccountsService(IBlockchainReader blockchainReader)
     {
-        _blockchainService = blockchainService;
+        _blockchainReader = blockchainReader;
     }
+
 
     public Result<decimal> GetBalance(string address)
     {
         decimal balance = 0;
-        var chainResult = _blockchainService.GetChain();
+        var chainResult = _blockchainReader.GetChain();
         foreach (var block in chainResult.Data)
         {
             foreach (var transaction in block.Transactions)
@@ -36,7 +37,7 @@ public class AccountsService : IAccountsService
 
     public Result<List<TransactionWithBlockInfo>> GetTransactions(string address)
     {
-        var chainResult = _blockchainService.GetChain();
+        var chainResult = _blockchainReader.GetChain();
         var transactions = chainResult
             .Data
             .SelectMany(t => t.Transactions.Select(x => new TransactionWithBlockInfo
