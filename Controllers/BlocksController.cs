@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace BlockchainNet.Controllers;
 
 [ApiController]
-[Route("api/v1/blockchain")]
-public class BlockchainController : ControllerBase
+[Route("api/v1/blocks")]
+public class BlocksController : ControllerBase
 {
     private readonly IBlockchainService _blockchainService;
 
-    public BlockchainController(IBlockchainService blockchainService)
+    public BlocksController(IBlockchainService blockchainService)
     {
         _blockchainService = blockchainService;
     }

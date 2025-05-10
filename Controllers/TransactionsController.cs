@@ -5,17 +5,18 @@ using Microsoft.AspNetCore.Mvc;
 namespace BlockchainNet.Controllers;
 
 [ApiController]
-[Route("api/v1/transaction")]
-public class TransactionController : ControllerBase
+[Route("api/v1/transactions")]
+public class TransactionsController : ControllerBase
 {
     private readonly ITransactionService _transactionService;
 
-    public TransactionController(ITransactionService transactionService)
+    public TransactionsController(ITransactionService transactionService)
     {
         _transactionService = transactionService;
     }
     
     [HttpGet]
+    [Route("pending")]
     public IActionResult GetTransactions()
     {
         var result = _transactionService.GetPendingTransactions();
