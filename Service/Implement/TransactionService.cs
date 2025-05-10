@@ -14,10 +14,11 @@ public class TransactionService : ITransactionService
         _pendingTransactions = TransactionStorage.Load() ?? new List<Transaction>();
     }
 
-    public void AddTransaction(Transaction transaction)
+    public Result<Transaction> AddTransaction(Transaction transaction)
     {
         _pendingTransactions.Add(transaction);
         TransactionStorage.Save(_pendingTransactions);
+        return Result<Transaction>.Ok(transaction);
     }
 
     public Result<List<Transaction>> GetPendingTransactions()
@@ -25,10 +26,11 @@ public class TransactionService : ITransactionService
         return Result<List<Transaction>>.Ok(_pendingTransactions);
     }
 
-    public void ClearPendingTransactions()
+    public Result<List<Transaction>> ClearPendingTransactions()
     {
         _pendingTransactions.Clear();
         TransactionStorage.Save(_pendingTransactions);
+        return Result<List<Transaction>>.Ok(_pendingTransactions);
     }
 
     public Transaction CreateRewardTransaction(string miner, decimal rewardAmount)

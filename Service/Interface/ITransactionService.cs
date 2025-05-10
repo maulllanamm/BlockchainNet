@@ -4,8 +4,8 @@ namespace BlockchainNet.Service.Interface;
 
 public interface ITransactionService
 {
-    void AddTransaction(Transaction transaction);
+    Result<Transaction>  AddTransaction(Transaction transaction);
     Result<List<Transaction>> GetPendingTransactions();
-    void ClearPendingTransactions();
+    Result<List<Transaction>>  ClearPendingTransactions();
     Transaction CreateRewardTransaction(string miner, decimal rewardAmount);
 }

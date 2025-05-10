@@ -11,7 +11,6 @@ public class BlockService : IBlockService
     {
         var block =  new Block
         {
-            Index = 0,
             Timestamp = DateTime.UtcNow,
             Transactions = new List<Transaction>(),
             PreviousHash = "0",
@@ -26,7 +25,6 @@ public class BlockService : IBlockService
     {
         var block =  new Block
         {
-            Index = previousBlock.Index + 1,
             Timestamp = DateTime.UtcNow,
             Transactions = transactions.Select(t => new Transaction
             {
@@ -45,7 +43,7 @@ public class BlockService : IBlockService
     public string CalculateHash(Block block)
     {
         var transactionDetail = string.Join(',', block.Transactions.Select(t => $"{t.Sender}-{t.Receiver}-{t.Amount}"));
-        var input = block.Index + block.Timestamp.ToString() + block.PreviousHash + transactionDetail + block.nonce.ToString();
+        var input = block.Timestamp.ToString() + block.PreviousHash + transactionDetail + block.nonce.ToString();
         using var sha256 = SHA256.Create();
         var bytes = Encoding.UTF8.GetBytes(input);
         var hashBytes = sha256.ComputeHash(bytes);

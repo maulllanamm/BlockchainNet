@@ -25,16 +25,15 @@ public class TransactionController : ControllerBase
     [HttpPost]
     public IActionResult AddTransaction(Transaction transaction)
     {
-        _transactionService.AddTransaction(transaction);
-        return Ok();
+        var result = _transactionService.AddTransaction(transaction);
+        return Ok(result);
     }
     
     [HttpDelete]
     public IActionResult DeleteTransaction()
     {
-        _transactionService.ClearPendingTransactions();
-        return Ok();
+        var result = _transactionService.ClearPendingTransactions();
+        return Ok(result);
     }
-    
     
 }
