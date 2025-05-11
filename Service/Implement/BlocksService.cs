@@ -31,6 +31,8 @@ public class BlocksService : IBlocksHasher, IBlocksFactory, IBlocksMiner
                 Receiver = t.Receiver,
                 Sender = t.Sender,
                 Amount = t.Amount,
+                PublicKey = t.PublicKey,
+                Signature = t.Signature
             }).ToList(),
             PreviousHash = previousBlock.Hash,
             nonce = 0

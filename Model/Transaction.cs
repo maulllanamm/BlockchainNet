@@ -1,10 +1,13 @@
 namespace BlockchainNet.Model;
 
-public class Transaction
+public class Transaction : BaseTransaction
 {
-    public string Sender { get; set; }   
-    public string Receiver { get; set; }   
-    public decimal Amount { get; set; }   
+    public string PublicKey { get; set; }   // base64 ECDSA public key
+    public string Signature { get; set; }   // base64 ECDSA signature
+}
+public class SignTransactionRequest : BaseTransaction
+{
+    public string PublicKey { get; set; }   // base64 ECDSA public key
 }
 
 public class TransactionWithBlockInfo
@@ -13,3 +16,5 @@ public class TransactionWithBlockInfo
     public string BlockHash { get; set; }
     public DateTime Timestamp { get; set; }
 }
+
+
