@@ -63,7 +63,11 @@ public class BlockchainMinerService : IBlockchainMiner
         }
         
         var rewardTransaction = _transactionsFactory.CreateRewardTransaction(minerAddress, _reward);
-        _transactionsPool.AddTransaction(rewardTransaction);
+        var addRewardTransaction = _transactionsPool.AddTransaction(rewardTransaction);
+        if (!addRewardTransaction.Success)
+        {
+            return Result<Block>.Fail(addRewardTransaction.Message, 400);
+        }
         var previousBlock = _chain.Last();
         var pendingTransaction = _transactionsPool.GetPendingTransactions();
         var block = _blocksFactory.CreateBlock(previousBlock, pendingTransaction.Data);

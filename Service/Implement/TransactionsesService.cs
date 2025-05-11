@@ -65,13 +65,19 @@ public class TransactionsesService : ITransactionsPool, ITransactionsFactory, IT
 
     public Result<Transaction> Validate(Transaction transaction)
     {
+        var isRewardTransaction = transaction.Sender == "SYSTEM";
+        if (isRewardTransaction)
+        {
+            return Result<Transaction>.Ok(transaction);
+        }
+        
         if (transaction.Amount <= 0 || transaction.Amount == null)
         {
             return Result<Transaction>.Fail("Invalid amount", 404);
         }
 
         var sender = _cryptoHelper.GenerateAddress(transaction.PublicKey);
-        if (sender != transaction.Sender)
+        if (sender != transaction.Sender )
         {
             return Result<Transaction>.Fail("Sender address does not match public key", 404);
         }
