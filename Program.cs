@@ -12,6 +12,9 @@ builder.Services.AddSwaggerGen();
 // DI
 builder.Services.AddCustomService();
 
+// Konfigurasi WebHost untuk mendengarkan di semua alamat IP
+builder.WebHost.UseUrls("http://0.0.0.0:80");
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -21,7 +24,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
