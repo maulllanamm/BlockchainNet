@@ -4,27 +4,27 @@ using BlockchainNet.Storage;
 
 namespace BlockchainNet.Service.Implement;
 
-public class BlockchainService : IBlockchainMiner, IBlockchainReader
+public class BlockchainMinerService : IBlockchainMiner
 {
-    private readonly List<Block> _chain;
     private readonly IBlocksHasher _blocksHasher;
     private readonly IBlocksFactory _blocksFactory;
     private readonly IBlocksMiner _blocksMiner;
+    private readonly ITransactionsFactory _transactionsFactory;
+    private readonly ITransactionsPool _transactionsPool;
     private readonly int _difficulty = 2;
     private readonly int _reward = 50;
-    private readonly ITransactionFactory _transactionFactory;
-    private readonly ITransactionsPool _transactionsPool;
+    private readonly List<Block> _chain;
 
-    public BlockchainService(IBlocksHasher blocksHasher, 
+    public BlockchainMinerService(IBlocksHasher blocksHasher, 
         IBlocksFactory blocksFactory, 
         IBlocksMiner blocksMiner, 
-        ITransactionFactory transactionFactory, 
+        ITransactionsFactory transactionsFactory, 
         ITransactionsPool transactionsPool)
     {
         _blocksHasher = blocksHasher;
         _blocksFactory = blocksFactory;
         _blocksMiner = blocksMiner;
-        _transactionFactory = transactionFactory;
+        _transactionsFactory = transactionsFactory;
         _transactionsPool = transactionsPool;
         _chain = BlockchainStorage.Load() ?? new List<Block>();
         if (!_chain.Any())
@@ -33,16 +33,6 @@ public class BlockchainService : IBlockchainMiner, IBlockchainReader
             _chain.Add(genesis);
             BlockchainStorage.Save(_chain);    
         }
-    }
-    
-    public Result<List<Block>> GetChain()
-    {
-        return Result<List<Block>>.Ok(_chain);
-    }
-
-    public Result<Block> GetLatestBlock()
-    {
-        return Result<Block>.Ok(_chain.Last());
     }
 
     private bool VerifyChain()
@@ -64,6 +54,7 @@ public class BlockchainService : IBlockchainMiner, IBlockchainReader
         }
         return true;
     }
+    
     public Result<Block> Mine(string minerAddress)
     {
         if (!VerifyChain())
@@ -71,11 +62,11 @@ public class BlockchainService : IBlockchainMiner, IBlockchainReader
             return Result<Block>.Fail("Blockchain is invalid. Aborting block addition.", 400);
         }
         
-        var rewardTransaction = _transactionFactory.CreateRewardTransaction(minerAddress, _reward);
+        var rewardTransaction = _transactionsFactory.CreateRewardTransaction(minerAddress, _reward);
         _transactionsPool.AddTransaction(rewardTransaction);
-        var previousBlock = GetLatestBlock();
+        var previousBlock = _chain.Last();
         var pendingTransaction = _transactionsPool.GetPendingTransactions();
-        var block = _blocksFactory.CreateBlock(previousBlock.Data, pendingTransaction.Data);
+        var block = _blocksFactory.CreateBlock(previousBlock, pendingTransaction.Data);
         _blocksMiner.MineBlock(_difficulty, block);
         _chain.Add(block);
         BlockchainStorage.Save(_chain);

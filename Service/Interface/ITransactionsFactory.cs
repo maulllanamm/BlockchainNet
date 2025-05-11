@@ -2,7 +2,7 @@ using BlockchainNet.Model;
 
 namespace BlockchainNet.Service.Interface;
 
-public interface ITransactionFactory
+public interface ITransactionsFactory
 {
     Transaction CreateRewardTransaction(string receiver, decimal amount);
 }

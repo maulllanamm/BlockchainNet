@@ -27,7 +27,9 @@ public class TransactionsController : ControllerBase
     public IActionResult AddTransaction(Transaction transaction)
     {
         var result = _transactionsPool.AddTransaction(transaction);
-        return Ok(result);
+        return result.Success
+        ? Ok(result)
+        : StatusCode(result.StatusCode, result);
     }
     
     [HttpDelete]
