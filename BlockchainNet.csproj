@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include=".github\workflow\ci-cd.yml" />
+      <Content Include=".github\workflows\ci-cd.yml" />
     </ItemGroup>
 
 </Project>
