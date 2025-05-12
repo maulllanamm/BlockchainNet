@@ -35,6 +35,10 @@ app.UseEndpoints(endpoints =>
     {
         await context.Response.WriteAsync("Hello, world!");
     });
+    endpoints.MapGet("/cicd", async context =>
+    {
+        await context.Response.WriteAsync("test ci cd!");
+    });
 });
 
 app.Run();
