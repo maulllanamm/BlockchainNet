@@ -26,6 +26,16 @@ public class TransactionsController : ControllerBase
     }
     
     [HttpPost]
+    [Route("initial")]
+    public IActionResult InitialTransaction()
+    {
+        var result = _transactionsCommand.CreateInitialTransaction();
+        return result.Success
+        ? Ok(result)
+        : StatusCode(result.StatusCode, result);
+    }
+    
+    [HttpPost]
     public IActionResult AddTransaction(Transaction transaction)
     {
         var result = _transactionsCommand.AddTransaction(transaction);

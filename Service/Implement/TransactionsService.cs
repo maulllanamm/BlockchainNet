@@ -19,6 +19,22 @@ public class TransactionsService : ITransactionsQuery, ITransactionsCommand, ITr
         _pendingTransactions = new List<Transaction>();
         _pendingTransactions = TransactionStorage.Load() ?? new List<Transaction>();
     }
+    
+    public Result<Transaction> CreateInitialTransaction(int initialBalance = 100)
+    {
+        var wallet = _walletsCommand.GenerateKeyPair();
+        var initialTransaction = new Transaction
+        {
+            Sender = "SYSTEM",
+            Receiver = wallet.Address,
+            Amount = initialBalance,
+            PublicKey = wallet.PublicKey,
+            Signature = "SYSTEM"
+        };
+        var result = AddTransaction(initialTransaction);
+        return result;
+    }
+
 
     public Result<Transaction> AddTransaction(Transaction transaction)
     {

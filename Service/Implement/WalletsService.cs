@@ -55,16 +55,18 @@ public class WalletsService : IWalletsQuery ,IWalletsCommand
             .ToList();
         return Result<List<TransactionWithBlockInfo>>.Ok(transactions);
     }
-
+    
     public Wallet GenerateKeyPair()
     {
         using var ecdsa = ECDsa.Create(ECCurve.NamedCurves.nistP256);
         var privateKey = Convert.ToBase64String(ecdsa.ExportECPrivateKey());
         var publicKey = Convert.ToBase64String(ecdsa.ExportSubjectPublicKeyInfo());
+        var address = GenerateAddress(publicKey);
         return new Wallet
         {
             PrivateKey = privateKey,
-            PublicKey = publicKey
+            PublicKey = publicKey,
+            Address = address
         };
     }
 
