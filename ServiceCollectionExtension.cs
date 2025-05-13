@@ -1,3 +1,4 @@
+using BlockchainNet.Helper;
 using BlockchainNet.Service.Implement;
 using BlockchainNet.Service.Interface;
 
@@ -20,5 +21,7 @@ public static class ServiceCollectionExtension
 
         services.AddScoped<IWalletsQuery, WalletsService>();
         services.AddScoped<IWalletsCommand, WalletsService>();
+        
+        services.AddScoped<IHelperHash, HelperService>();
     }
 }

@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using BlockchainNet.Helper;
 using BlockchainNet.Model;
 using BlockchainNet.Service.Interface;
 
@@ -8,10 +9,12 @@ namespace BlockchainNet.Service.Implement;
 public class WalletsService : IWalletsQuery ,IWalletsCommand
 {
     private readonly IBlockchainQuery _blockchainQuery;
+    private readonly IHelperHash _helperHash;
 
-    public WalletsService(IBlockchainQuery blockchainQuery)
+    public WalletsService(IBlockchainQuery blockchainQuery, IHelperHash helperHash)
     {
         _blockchainQuery = blockchainQuery;
+        _helperHash = helperHash;
     }
 
 
@@ -67,10 +70,7 @@ public class WalletsService : IWalletsQuery ,IWalletsCommand
 
     public string GenerateAddress(string publicKey)
     {
-        using var sha256 = SHA256.Create();
-        var bytes = Encoding.UTF8.GetBytes(publicKey);
-        var hashBytes = sha256.ComputeHash(bytes);
-        return Convert.ToHexString(hashBytes);
+        return _helperHash.GenerateHash(publicKey);
     }
 
     public string GenerateSign(SignTransactionRequest signTransactionRequest, string base64PrivateKey)
