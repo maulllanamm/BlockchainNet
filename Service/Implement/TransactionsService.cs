@@ -1,6 +1,5 @@
 using System.Security.Cryptography;
 using System.Text;
-using BlockchainNet.Helper;
 using BlockchainNet.Model;
 using BlockchainNet.Service.Interface;
 using BlockchainNet.Storage;
@@ -10,20 +9,20 @@ namespace BlockchainNet.Service.Implement;
 public class TransactionsService : ITransactionsQuery, ITransactionsCommand, ITransactionsValidation
 {
     private readonly List<Transaction> _pendingTransactions;
-    private readonly ICryptoHelper _cryptoHelper;
-    private readonly IAccountsPool _accountsPool;
+    private readonly IWalletsCommand _walletsCommand;
+    private readonly IWalletsQuery _walletsQuery;
 
-    public TransactionsService(ICryptoHelper cryptoHelper, IAccountsPool accountsPool)
+    public TransactionsService(IWalletsQuery walletsQuery, IWalletsCommand walletsCommand)
     {
-        _cryptoHelper = cryptoHelper;
-        _accountsPool = accountsPool;
+        _walletsQuery = walletsQuery;
+        _walletsCommand = walletsCommand;
         _pendingTransactions = new List<Transaction>();
         _pendingTransactions = TransactionStorage.Load() ?? new List<Transaction>();
     }
 
     public Result<Transaction> AddTransaction(Transaction transaction)
     {
-        var isValidSign = _cryptoHelper.Verify(transaction);
+        var isValidSign = _walletsCommand.VerifySign(transaction);
         if (!isValidSign)
         {
             return Result<Transaction>.Fail("Cannot add invalid transaction");
@@ -76,13 +75,13 @@ public class TransactionsService : ITransactionsQuery, ITransactionsCommand, ITr
             return Result<Transaction>.Fail("Invalid amount", 404);
         }
 
-        var sender = _cryptoHelper.GenerateAddress(transaction.PublicKey);
+        var sender = _walletsCommand.GenerateAddress(transaction.PublicKey);
         if (sender != transaction.Sender )
         {
             return Result<Transaction>.Fail("Sender address does not match public key", 404);
         }
 
-        var balance = _accountsPool.GetBalance(sender);
+        var balance = _walletsQuery.GetBalance(sender);
         if (balance.Data < transaction.Amount)
         {
             return Result<Transaction>.Fail("Sender doesn't have enough funds", 404);

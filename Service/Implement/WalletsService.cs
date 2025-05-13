@@ -1,17 +1,64 @@
 using System.Security.Cryptography;
 using System.Text;
 using BlockchainNet.Model;
+using BlockchainNet.Service.Interface;
 
-namespace BlockchainNet.Helper;
+namespace BlockchainNet.Service.Implement;
 
-public class CryptoHelper : ICryptoHelper
+public class WalletsService : IWalletsQuery ,IWalletsCommand
 {
-    public KeyPair GenerateKeyPair()
+    private readonly IBlockchainQuery _blockchainQuery;
+
+    public WalletsService(IBlockchainQuery blockchainQuery)
+    {
+        _blockchainQuery = blockchainQuery;
+    }
+
+
+    public Result<decimal> GetBalance(string address)
+    {
+        decimal balance = 0;
+        var chainResult = _blockchainQuery.GetChain();
+        foreach (var block in chainResult.Data)
+        {
+            foreach (var transaction in block.Transactions)
+            {
+                if (transaction.Sender == address)
+                {
+                    balance -= transaction.Amount;
+                }
+
+                if (transaction.Receiver == address)
+                {
+                    balance += transaction.Amount;
+                }
+            }
+        }
+        return Result<decimal>.Ok(balance);
+    }
+
+    public Result<List<TransactionWithBlockInfo>> GetTransactions(string address)
+    {
+        var chainResult = _blockchainQuery.GetChain();
+        var transactions = chainResult
+            .Data
+            .SelectMany(t => t.Transactions.Select(x => new TransactionWithBlockInfo
+            {
+                Transaction = x,
+                Timestamp = t.Timestamp,
+                BlockHash = t.Hash
+            }))
+            .Where(tx => tx.Transaction.Sender == address || tx.Transaction.Receiver == address)
+            .ToList();
+        return Result<List<TransactionWithBlockInfo>>.Ok(transactions);
+    }
+
+    public Wallet GenerateKeyPair()
     {
         using var ecdsa = ECDsa.Create(ECCurve.NamedCurves.nistP256);
         var privateKey = Convert.ToBase64String(ecdsa.ExportECPrivateKey());
         var publicKey = Convert.ToBase64String(ecdsa.ExportSubjectPublicKeyInfo());
-        return new KeyPair
+        return new Wallet
         {
             PrivateKey = privateKey,
             PublicKey = publicKey
@@ -26,7 +73,7 @@ public class CryptoHelper : ICryptoHelper
         return Convert.ToHexString(hashBytes);
     }
 
-    public string Sign(SignTransactionRequest signTransactionRequest, string base64PrivateKey)
+    public string GenerateSign(SignTransactionRequest signTransactionRequest, string base64PrivateKey)
     {
         using var ecdsa = ECDsa.Create();
         ecdsa.ImportECPrivateKey(Convert.FromBase64String(base64PrivateKey), out _);
@@ -37,7 +84,7 @@ public class CryptoHelper : ICryptoHelper
         return Convert.ToBase64String(signature);
     }
 
-    public bool Verify(Transaction transaction)
+    public bool VerifySign(Transaction transaction)
     {
         if (transaction.PublicKey == "SYSTEM" || transaction.Signature == "SYSTEM")
         {
