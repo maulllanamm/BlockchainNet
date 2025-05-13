@@ -4,18 +4,18 @@ using BlockchainNet.Storage;
 
 namespace BlockchainNet.Service.Implement;
 
-public class BlockchainReaderService :  IBlockchainReader
+public class BlockchainQueryService :  IBlockchainQuery
 {
     private readonly List<Block> _chain;
-    private readonly IBlocksFactory _blocksFactory;
+    private readonly IBlocksCommand _blocksCommand;
     
-    public BlockchainReaderService(IBlocksFactory blocksFactory)
+    public BlockchainQueryService(IBlocksCommand blocksCommand)
     {
-        _blocksFactory = blocksFactory;
+        _blocksCommand = blocksCommand;
         _chain = BlockchainStorage.Load() ?? new List<Block>();
         if (!_chain.Any())
         {
-            var genesis = _blocksFactory.CreateGenesisBlock();
+            var genesis = _blocksCommand.CreateGenesisBlock();
             _chain.Add(genesis);
             BlockchainStorage.Save(_chain);    
         }

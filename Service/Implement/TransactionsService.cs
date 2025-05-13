@@ -7,13 +7,13 @@ using BlockchainNet.Storage;
 
 namespace BlockchainNet.Service.Implement;
 
-public class TransactionsesService : ITransactionsPool, ITransactionsFactory, ITransactionsValidation
+public class TransactionsService : ITransactionsQuery, ITransactionsCommand, ITransactionsValidation
 {
     private readonly List<Transaction> _pendingTransactions;
     private readonly ICryptoHelper _cryptoHelper;
     private readonly IAccountsPool _accountsPool;
 
-    public TransactionsesService(ICryptoHelper cryptoHelper, IAccountsPool accountsPool)
+    public TransactionsService(ICryptoHelper cryptoHelper, IAccountsPool accountsPool)
     {
         _cryptoHelper = cryptoHelper;
         _accountsPool = accountsPool;

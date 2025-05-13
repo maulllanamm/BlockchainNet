@@ -9,18 +9,18 @@ namespace BlockchainNet.Controllers;
 public class BlockchainController : ControllerBase
 {
     private readonly IBlockchainMiner _blockchainMiner;
-    private readonly IBlockchainReader _blockchainReader;
+    private readonly IBlockchainQuery _blockchainQuery;
 
-    public BlockchainController(IBlockchainMiner blockchainMiner, IBlockchainReader blockchainReader)
+    public BlockchainController(IBlockchainMiner blockchainMiner, IBlockchainQuery blockchainQuery)
     {
         _blockchainMiner = blockchainMiner;
-        _blockchainReader = blockchainReader;
+        _blockchainQuery = blockchainQuery;
     }
     
     [HttpGet]
     public IActionResult GetChain()
     {
-        var result = _blockchainReader.GetChain();
+        var result = _blockchainQuery.GetChain();
         return Ok(result);
     }    
     
@@ -28,7 +28,7 @@ public class BlockchainController : ControllerBase
     [Route("latest")]
     public IActionResult GetLatestBlock()
     {
-        var result = _blockchainReader.GetLatestBlock();
+        var result = _blockchainQuery.GetLatestBlock();
         return Ok(result);
     }    
     
