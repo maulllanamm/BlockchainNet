@@ -18,7 +18,7 @@ public class WalletController : ControllerBase
 
     [HttpGet]
     [Route("{address}/balance")]
-    public IActionResult GetBalance(string address)
+    public IActionResult GetBalance([FromHeader] string address)
     {
         var result = _walletsQuery.GetBalance(address);
         return Ok(result);
@@ -26,7 +26,7 @@ public class WalletController : ControllerBase
     
     [HttpGet]
     [Route("{address}/transactions")]
-    public IActionResult GetTransactions(string address)
+    public IActionResult GetTransactions([FromHeader] string address)
     {
         var result = _walletsQuery.GetTransactions(address);
         return Ok(result);
@@ -42,7 +42,7 @@ public class WalletController : ControllerBase
     
     [HttpPost]
     [Route("address")]
-    public IActionResult GenerateAddress(string publicKey)
+    public IActionResult GenerateAddress([FromHeader] string publicKey)
     {
         var result = _walletsCommand.GenerateAddress(publicKey);
         return Ok(result);

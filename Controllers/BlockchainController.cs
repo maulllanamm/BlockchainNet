@@ -34,7 +34,7 @@ public class BlockchainController : ControllerBase
     
     [HttpPost]
     [Route("mine")]
-    public IActionResult Mine(string minerAddress)
+    public IActionResult Mine([FromHeader] string minerAddress)
     {
         var result = _blockchainMiner.Mine(minerAddress);
         return Ok(result);

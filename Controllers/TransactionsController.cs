@@ -36,7 +36,7 @@ public class TransactionsController : ControllerBase
     }
     
     [HttpPost]
-    public IActionResult AddTransaction(Transaction transaction)
+    public IActionResult AddTransaction([FromBody] Transaction transaction)
     {
         var result = _transactionsCommand.AddTransaction(transaction);
         return result.Success
