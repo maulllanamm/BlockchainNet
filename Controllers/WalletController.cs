@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BlockchainNet.Controllers;
 
 [ApiController]
-[Route("api/v1/accounts")]
+[Route("api/v1/wallets")]
 public class WalletController : ControllerBase
 {
     private readonly IWalletsQuery _walletsQuery;
