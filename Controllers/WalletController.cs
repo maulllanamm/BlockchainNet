@@ -50,7 +50,7 @@ public class WalletController : ControllerBase
     
     [HttpPost]
     [Route("sign")]
-    public IActionResult Sign(SignTransactionRequest signTransactionRequest, string base64PrivateKey)
+    public IActionResult Sign([FromBody]SignTransactionRequest signTransactionRequest, [FromHeader(Name = "x-private-key")] string base64PrivateKey)
     {
         var result = _walletsCommand.GenerateSign(signTransactionRequest, base64PrivateKey);
         return Ok(result);
