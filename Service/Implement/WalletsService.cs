@@ -75,7 +75,7 @@ public class WalletsService : IWalletsQuery ,IWalletsCommand
         return _helperHash.GenerateHash(publicKey);
     }
 
-    public string GenerateSign(SignTransactionRequest signTransactionRequest, string base64PrivateKey)
+    public string GenerateSign(BaseTransaction signTransactionRequest, string base64PrivateKey)
     {
         using var ecdsa = ECDsa.Create();
         ecdsa.ImportECPrivateKey(Convert.FromBase64String(base64PrivateKey), out _);

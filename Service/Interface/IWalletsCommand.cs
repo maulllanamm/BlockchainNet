@@ -6,6 +6,6 @@ public interface IWalletsCommand
 {
     Wallet GenerateKeyPair();
     string GenerateAddress(string publicKey);
-    string GenerateSign(SignTransactionRequest signTransactionRequest, string base64PrivateKey);
+    string GenerateSign(BaseTransaction signTransactionRequest, string base64PrivateKey);
     bool VerifySign(Transaction transaction);
 }
