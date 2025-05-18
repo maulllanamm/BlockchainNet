@@ -37,6 +37,9 @@ var app = builder.Build();
 
 app.UseAuthorization();
 
+// Aktifkan CORS
+app.UseCors("AllowAnyOrigin");
+
 app.MapControllers();
 
 app.UseRouting();
