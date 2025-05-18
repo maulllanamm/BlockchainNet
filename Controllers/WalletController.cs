@@ -10,9 +10,10 @@ public class WalletController : ControllerBase
 {
     private readonly IWalletsQuery _walletsQuery;
     private readonly IWalletsCommand _walletsCommand;
-    public WalletController(IWalletsQuery walletsQuery)
+    public WalletController(IWalletsQuery walletsQuery, IWalletsCommand walletsCommand)
     {
         _walletsQuery = walletsQuery;
+        _walletsCommand = walletsCommand;
     }
 
     [HttpGet]
