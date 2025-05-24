@@ -16,7 +16,6 @@ public class TransactionsService : ITransactionsQuery, ITransactionsCommand, ITr
     {
         _walletsQuery = walletsQuery;
         _walletsCommand = walletsCommand;
-        _pendingTransactions = new List<Transaction>();
         _pendingTransactions = TransactionStorage.Load() ?? new List<Transaction>();
     }
     
