@@ -15,9 +15,12 @@ public static class ServiceCollectionExtension
         services.AddScoped<IBlocksHasher, BlocksService>();
         services.AddScoped<IBlocksMiner, BlocksService>();
         
-        services.AddScoped<ITransactionsCommand, TransactionsService>();
-        services.AddScoped<ITransactionsQuery, TransactionsService>();
-        services.AddScoped<ITransactionsValidation, TransactionsService>();
+        services.AddScoped<TransactionsService>(); // ✅ satu instance
+
+        // Semua interface diarahkan ke instance yang sama
+        services.AddScoped<ITransactionsCommand>(sp => sp.GetRequiredService<TransactionsService>());
+        services.AddScoped<ITransactionsQuery>(sp => sp.GetRequiredService<TransactionsService>());
+        services.AddScoped<ITransactionsValidation>(sp => sp.GetRequiredService<TransactionsService>());
 
         services.AddScoped<IWalletsQuery, WalletsService>();
         services.AddScoped<IWalletsCommand, WalletsService>();
